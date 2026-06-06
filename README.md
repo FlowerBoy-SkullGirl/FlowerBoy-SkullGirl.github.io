@@ -44,8 +44,11 @@ Throughout the codebase, ‘magic numbers’ were identified and replaced with c
 
 
 I believe that these enhancements exemplify several course outcomes, which I will quote verbatime here:
+
 “1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science 
+
 2. Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts”
+
 I believe that through the development of well-crafted written and visual communications that relay different levels of technical information, making these communications available in a format that is readily available to any person with access to a web browser (which should encompass the wide majority of people who have access to a computer), and targeting these communications towards people who could contribute to the project with the intent of making the code more accessible to use and understand, that I have also demonstrated success in following through with my strategy to build a collaborative environment for the project, rather than an environment that I alone work in.
 
 ### Enhancement 2: Feature Addition
@@ -58,7 +61,9 @@ This allows for the possibility of easily implemented future camera movement typ
 While building the system, the previously global scope values for camera properties were becoming more numerous and difficult to handle. It is still advantageous for any section of the project code to have immediate access to the camera properties without being passed the camera struct through function calls (which may require multiple nested calls, and passing the argument multiple times), for example in a scenario where we may wish to reduce the calculation of physics to only those objects which are relatively near to the camera position. The solution to this problem was to make the camera struct object global in scope and ensure that each of these important properties were contained within it. In this way, we only need to be aware of one global scope name, but still have access to the desired variables.
 
 The course outcomes that this enhancement demonstrates are as follows:
+
 “3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
+
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)”
 
 My design choices used in the additional feature clearly demonstrate my ability to evaluate solutions for a given problem and find advantages to certain architectural decisions that will enable the project to succeed with further enhancements in the future. My use of various C language features that best solve the project’s given problem also shows an ability to use industry standard techniques, skills, and tools to deliver value to a project or specific goal.
@@ -75,8 +80,11 @@ The testing suite was the more substantial improvement. A new directory called �
 <img src="docs/assets/images/TestSample.png" alt="A snippet of code from the testing suite, which shows how memory tests are run and results are evaluated.">
 
 This enhancement exemplifies the goals several key course outcomes:
+
 “1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
+
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)
+
 5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
 
 The creation of automation that is reproducible and easily utilized by a full time promotes the creation of a collaborative environment. The use of industry-standard tools like valgrind, GNU make, and testing driver programs to achieve industry-specific goals like quality assurance testing showcase outcome 4. The act of testing to reduce errors, prevent the inclusion of errors, and ensure the memory-safety of the program, which is the most exploited attack surface of any C program, demonstrates the use of a security mindset and architecting security as a first class priority into the project.
@@ -102,8 +110,11 @@ Below is pictured a before and after for real time between each frame, showing t
 <img src="docs/assets/images/SystemCallBefore.png" alt="The time between each frame before the system call efficiency improvements, averaging ~4ms"> <img src="docs/assets/images/SystemCallAfter.png" alt="The time between each frame after the system call efficiency improvements, averaging ~4ms.">
 	
 The course outcomes I wished to demonstrate with this change were as follows:
+
 “3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
+
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database) 
+
 5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
 
 By using a singleton-like pattern to implement a solution that improved the system call efficiency of the program, I demonstrated the ability to use well-founded techniques to deliver on industry-specific goals (4). Evaluating the existing inefficiency in the program and designing an algorithm that would eliminate that deficiency with minimal drawbacks shows my ability to appropriately apply algorithms to a given problem (3). Finally, minimizing the number of calls to malloc, the number of pointers being used, and centralizing how that memory is allocated, accessed, and freed contributes to safer code that is less likely to perform memory errors, reduces the difficulty of tracing memory calls and evaluating memory safety, and makes it easier for future code in the project to make safe memory calls (5).
@@ -123,6 +134,7 @@ The more difficult work was implementing the ‘calculate\_tether()’ function,
 
 
 Since this enhancement was purely focused on algorithmic complexity and the addition of a new feature to the project, it targets only one course outcome:
+
 “3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms)”
 
 By using a mathematical and algorithmic solution to solve the problem of adding a new feature based on changing project requirements, I believe the enhancement strongly demonstrates this skill.
@@ -141,7 +153,9 @@ The images below shows the capability of using pointer arithmetic on the memory 
 The images above also show a portion of the code used to serialize the game objects into the data structure. It is done by calling a wrapper function to memcpy, which copies the bytes of the passed data type into the data structure’s memory heap at the appropriate offset. The data can be deserialized by using the same offsets (which can be determined by the size of the data types listed by the data type array) and using memcpy with the object attributes as the destination and the data buffer as the source, rather than the other way around.
 	
 The course outcomes exemplified in this enhancement are:
+
 “3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
+
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)”
 
 By solving the problem of needing to accept a variable number of elements of multiple data types in a single argument by storing them in a data structure, then writing the appropriate algorithms to place data in and read data from this structure, I have shown the capacity to design and evaluate algorithmic solutions to a given problem (3). By appropriately utilizing the tools available in various C libraries that offer functions for memory manipulation and combining them with innovative techniques to deliver value to the project, I have demonstrated course outcome 4.
