@@ -20,6 +20,22 @@ This portfolio will include all coursework in CS-499, which aims to demonstrate 
 
 [Algorithms Enhancement 1: System Call Efficiency](#enhancement-1-system-call-efficiency)
 
+[Databases](#databases)
+
+[Databases Enhancment 1: Database From Scratch](#enhancement-1-database-from-scratch)
+
+[Databases: Requirements](#requirements)
+
+[Databases: Implementation Details](#implementation-details)
+
+[Databases: Database Structure](#database-structure)
+
+[Databases: Integration Into gl\_engine](#integration-into-gl_engine)
+
+[Databases: Course Outcomes](#course-outcomes)
+
+[Databases: Reflection](#reflection)
+
 
 ### Video Code Review
 As part of the coursework in CS-499, we conducted a code review which assesses the original state of the project, highlights the areas that need improvement, and outline the planned enhancements. The video can be accessed [here.](https://youtu.be/dlVn9z3ZkN4)
@@ -161,3 +177,66 @@ The course outcomes exemplified in this enhancement are:
 By solving the problem of needing to accept a variable number of elements of multiple data types in a single argument by storing them in a data structure, then writing the appropriate algorithms to place data in and read data from this structure, I have shown the capacity to design and evaluate algorithmic solutions to a given problem (3). By appropriately utilizing the tools available in various C libraries that offer functions for memory manipulation and combining them with innovative techniques to deliver value to the project, I have demonstrated course outcome 4.
 	
 In combination with the goals reached in the previous Milestones, I believe that I have strong supporting evidence of my competencies in the course outcomes through these enhancements.
+
+# Databases
+
+### Enhancement 1: Database From Scratch
+Previously, the gl\_engine project did not implement any sort of database component. The initialization of game objects in the main function is quite verbose, and consists of a number of arbitrary ‘magic numbers’ that determine each object’s position, rotation, and other attributes. I had previously considered moving all of this initialization into its own function, but the idea to store object data in files and retrieve the data at the time of initialization was also attractive. This could be a way to ‘save’ the state of the game so that that state may be loaded at will. I didn’t want to incorporate an external database program, such as MongoDB, and also didn’t wish to use SQL for the management of the database. I had also made the decision that a human-readable file that could be edited by hand may also be useful if one wished to initialize a set of game objects by writing a file with the correct properties and placing it in the game’s database directory.
+
+So, I thought it would be impressive and indicative of the skills necessary to engineer a complex system with file operations, memory management, and data management to write a database system from scratch, using only the standard C/C++ input and output libraries. The database would be human-readable, so delimiters would be used to separate containers and data in plain-text. The other advantage to using plain text is that the database file is platform-independent. If integer and float values are stored as strings, they may be retrieved on any system the database program is built for and always produce the same value. If the database had been written as a binary file, we would be required to specify the endianness and size of data types and enforce this in the functions that retrieve and write data. 
+
+That being said, if I were to begin this enhancement again, I would opt to remove the plain-text requirement. Instead, it may be preferable to write a table into a file that more closely resembles a filesystem table. The table would contain the offset, type, and size of each piece of data, as well as the table the data belongs to if the data is not a table. This would be convenient for storing more variable-sized data, such as strings, and would also enable easier access to single pieces of data, rather than reading an entire row at once. Queries may have also been faster with this method, as the table elements would be at fixed widths and easier to iterate more quickly than reading 1-byte at a time.
+
+### Requirements
+The requirements I set for the database were as follows: enable for the creation, reading, updating, and deletion of data points in a file; structure data in tables, separate tables in the database with a special symbol, store data in tables in rows with unique ids, separate rows in the table with a special symbol, and store data within rows separated by columns with a delimiter; accept a documented set of data types; and accept the data structure created in the algorithms and data structures enhancement that stores data of multiple types in a single buffer as input and output for data storage and retrieval functions. All of these requirements were met, but some planned features were abandoned to meet the project deadline, since these features were irrelevant/not necessary for the gl\_engine project. These features were searching for tables by name, assigning a name to each column in a table, and writing and retreiving indivual pieces of data rather than an entire row at a time. Ultimately, these features would not improve the integration into the existing project, but the infrastructure is there to easily complete them at a later date.
+
+### Implementation Details
+The library created can be separated (and is nominally separated by comments) into a few categories: file io that takes place at lower levels of abstraction, and database, table, column, and row operations that take place at higher levels of abstraction. The functions intended to be called by an accompanying program like gl\_engine are simple and user friendly. For example, find\_table\_by\_id(table id, db) requires the caller to pass a table id integer and a database pointer in as arguments and returns the offset of the table in the database file. Likewise, add\_row\_to\_table(row data, table id, db) takes the same arguments, plus the row data in the previously mentioned row\_object data structure format, and writes it to the specified table in the database. 
+Below are images that show examples of calling the database functions using the higher level API.
+<img src="docs/assets/images/DatabaseOpenCall.png" alt="A code snippet showing the way a database is opened in the API using the open database function.">
+<img src="docs/assets/images/DatabaseUpdateCall.png" alt="A code snippet showing the create and update calls for row data in the API.">
+
+The functions then call the lower level file io operations like serial\_to\_string() and f\_replace\_between() to actually write the data to disk with the intended formatting and delimiting. All of the file operations have been reduced to three functions, f\_copy\_between(), which copies data between certain offsets from one file to another (in our case, typically a temp file used to store an unmodified copy of the database or a copy that excludes certain data), f\_replace\_between(), which utilizes f\_copy\_between() to overwrite the data between each offset with the data passed in as an argument, and f\_insert\_after(), which is similar to f\_replace\_between(), but does not overwrite any data. Numerical data was written to and from strings by using snprintf() and sscanf() so that buffer sizes could be specified and their bounds could be checked to ensure that no read or write operations occur outside of properly allocated memory.
+
+Below is an image that shows the use of snprintf to ensure we do not write out of bounds of a buffer.
+<img src="docs/assets/images/DatabaseSizedBuffers.png" alt="An example of the use of sized buffers in the database code to limit writes to unallocated memory.">
+
+
+### Database Structure
+The structure of the database may look like the image below:
+<img src="docs/assets/images/DatabaseStructure.png" alt="The contents of a sample database file, showing comma-separated values contained in braces.">
+
+The database metadata is stored outside of any container at the beginning of the file, and specifies the number of tables and the last assigned id. Each table has a start and end symbol, which are ‘{‘ and ‘}’. Within the tables are metadata that describes the table’s id, number of rows, last assigned row id, number of columns, and name; the list of column names (currently unimplemented); the list of column data types; and then rows separated by delimiters and contained within a row start symbol ‘{‘ and row end symbol ‘}’. Within the rows are pieces of data separated by a delimiter ‘,’. Floats are stored with a fixed precision and strings are stored with a specified maximum length. 
+
+The data types are stored as a list of enumerators (image below) that are used when converting a row from a string of plain text to the elements’ respective data types.
+<img src="docs/assets/images/DatabaseTypes.png" alt="The definition of the types enumerator, which defines an int, float, and string type, with multiple reserved types.">
+
+### Integration Into gl\_engine
+Once the database library had been created and was capable of storing, retrieving, and deleting data, it was ready for utilization within gl\_engine. Near the beginning of the main function, the database is opened or created if it does not exist. Afterwards, when creating the player object, gl\_engine searches the database for a GameObjects table that contains a row with id value 1, which contains the object data for the player object. If this does not exist, the object is initialized with some other values. After the main rendering loop is exited and before cleanup begins, the player object data is either written to a new row, if no row had previously existed, or the data in row 1 of the objects table is updating with the new position and rotation of the player object. The outcome is that the player object data is ‘saved’ to the database each time the program is closed and ‘loaded’ each time the project is open. The concept could be optionally expanded to any other object that is initialized, and an entire collection of objects could be stored and loaded in this way. 
+
+Pictured below is the initialization of the player object from the database retrieval.
+<img src="docs/assets/images/DatabaseRetrievalCall.png" alt="A code snippet showing the use of read calls from the database API.">
+
+### Course Outcomes
+For convenience, I will list the course outcomes here, numbered 1-5:
+
+“1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
+
+2. Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts 3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
+
+4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database) 
+
+5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
+
+Outcome 2: Within the header file for the databases library are comments that clearly state the requirements and structure of the database, give some visual aid for the database layout, and specify how certain functions should be called and what return values to expect.
+<img src="docs/assets/images/DatabaseConstants.png" alt="A sample of many comments from the database header that communicate ideas about the structure and design philosophy of the database.">
+I find all of these written communications to be invaluable to a team environment, and of the correct technical specificity for anyone who may be reading the source code files.
+
+Outcome 3: In order to meet the requirements I set out for the system, a plethora of decisions had to be made to weigh the benefits and drawbacks of certain implementation details. For example, the decision between storing binary data and plain text data was a very challenging one that had benefits for either implementation. Building this feature-complete system from the ground up demonstrates my ability to design complex solutions, follow through with design decisions, and put into place a program that solves the given problem.
+
+Outcome 4: By utilizing well-founded techniques within the database design such as CRUD, the following of C function conventions like storing data of any type in a void * buffer, and following the conventions of a relational database with comma-separated values, I demonstrated the ability to expand upon existing practices to create systems that deliver on value in a predictable and familiar pattern.
+
+Outcome 5: The enhancement required a great deal of reading and writing from variable sized data buffers, which in C and C++ requires the use of dynamic memory allocation. Dynamic memory allocation errors account for a wide majority of high-severity security vulnerabilities. Along with the changes made in the Software Design and Engineering enhancements which added testing for memory safety within the project, great care was taken to check the bounds of memory arrays and use functions that allowed for the specification of buffer sizes (like snprintf). Functions within the library were also always written with buffer size arguments of types off\_t and size\_t, so that they could hold the maximum value of any valid argument obtained from the calling functions. Buffer sizes were always explained with comments, so that when future updates are performed, they can be changed appropriately. It was ensured that all calls to malloc have a matching call to free at any exit point in the function. Values that may be null are also checked as such before operations are performed, or else the operation is abandoned. In a networked version of the database program, implementation of authorization for database access would be planned for and easy to achieve.
+
+### Reflection
+Overall, I am very happy with the final product. It was quite an undertaking, and I learned a lot about the decisions that have to be made for database design. I was able to meet all of my desired requirements within the timeframe of this class, and the database library could be used for any general purpose outside of the gl\_engine project. I have a project called my\_ftp, which handles a lot of networking to implement an amateur version of the file transfer protocol, and what I would like for, if I were to continue this database project, is to use those networking libraries to create a database server that handles all the database management and listens on a port for API calls from the respective client program. This way, the database could be run on the same system with a local socket or on a separate system with an internet socket, and the process would be separate from the client which wishes to use the database.
