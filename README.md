@@ -31,7 +31,7 @@ In addition to the html pages, the comments were improved in every source code f
 
 <img src="docs/assets/images/CommentsAllocation.png" alt="A snippet of code showing new comments above functions describing allocations and return values.">
 Throughout the codebase, ‘magic numbers’ were identified and replaced with constants or preprocessor directive definitions to clarify their purpose.
-<img src="docs/assets/images/ConstantsDoucmentation.png" alt="Define directives in the code that eliminate the use of magic numbers">
+<img src="docs/assets/images/ConstantsDocumentation.png" alt="Define directives in the code that eliminate the use of magic numbers">
 <img src="docs/assets/images/MagicNumbers.png" alt="Variables added to the code to clarify the values being passed as arguments to certain functions.">
 
 
