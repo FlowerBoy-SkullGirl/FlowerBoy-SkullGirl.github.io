@@ -203,6 +203,7 @@ By solving the problem of needing to accept a variable number of elements of mul
 In combination with the goals reached in the previous Milestones, I believe that I have strong supporting evidence of my competencies in the course outcomes through these enhancements.
 
 # Databases
+Code for this section of the project can be found in a separate branch [here.](https://github.com/FlowerBoy-SkullGirl/gl_engine/tree/database)
 
 ### Enhancement 1: Database From Scratch
 Previously, the gl\_engine project did not implement any sort of database component. The initialization of game objects in the main function is quite verbose, and consists of a number of arbitrary ‘magic numbers’ that determine each object’s position, rotation, and other attributes. I had previously considered moving all of this initialization into its own function, but the idea to store object data in files and retrieve the data at the time of initialization was also attractive. This could be a way to ‘save’ the state of the game so that that state may be loaded at will. I didn’t want to incorporate an external database program, such as MongoDB, and also didn’t wish to use SQL for the management of the database. I had also made the decision that a human-readable file that could be edited by hand may also be useful if one wished to initialize a set of game objects by writing a file with the correct properties and placing it in the game’s database directory.
