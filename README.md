@@ -54,12 +54,17 @@ The reasons I chose this project as the one I would enhance as a capstone to my 
 ### Enhancement 1: Documentation
 
 For the ‘Software Design and Engineering’ enhancement category, I took a look at what enhancements could make a project successful in a collaborative environment rather than just what code could be written to ensure my personal project compiles and runs. Where I am able to work on my own project with few notes about what a particular function does or how to call it, a collaborative team environment requires far more purposeful documentation. That is why my first enhancement was to create a collection of html pages that document the structure of the project, the relationship between different libraries and objects, and some finer details of the more important libraries, their functions, and how data is accessed and structured by them. The html pages contain hyperlinks which were created to make exploration of the documentation easy, regardless of platform, and diagrams to add clarity to code relationships.
+
 <img src="docs/assets/images/DiagramDocumentation.png" alt="A diagram within the documentation pages showing object relationships.">
+
 In addition to the html pages, the comments were improved in every source code file in the project to specify function arguments, return values, memory allocation, and which functions must be called to deallocate memory. 
 
 <img src="docs/assets/images/CommentsAllocation.png" alt="A snippet of code showing new comments above functions describing allocations and return values.">
+
 Throughout the codebase, ‘magic numbers’ were identified and replaced with constants or preprocessor directive definitions to clarify their purpose.
+
 <img src="docs/assets/images/ConstantsDocumentation.png" alt="Define directives in the code that eliminate the use of magic numbers">
+
 <img src="docs/assets/images/MagicNumbers.png" alt="Variables added to the code to clarify the values being passed as arguments to certain functions.">
 
 
@@ -73,9 +78,11 @@ I believe that through the development of well-crafted written and visual commun
 
 ### Enhancement 2: Feature Addition
 The above enhancement was one of three enhancements that I chose for this category, as the class rubric requires the total of all enhancements to be rather large in scope. The second enhancement was intended to add complexity to the project by increasing its scope through an additional feature, making design decisions that would allow for further improvements to take place in the future, and demonstrate the flexibility of the existing code to accommodate changes. For this purpose, I decided to add the feature of camera movement (or, more technically, translating screen space in the graphics pipeline). To do so, I created an enum to specify an acceptable set of implemented movement types, a struct ‘object’ to hold values for different camera properties, and a number of functions to determine how these values will be set and utilized.
+
 <img src="docs/assets/images/glCamAddition.png" alt="A header file showing an additional struct added to contain camera data.">
 
 This allows for the possibility of easily implemented future camera movement types without breaking current functionality through the addition of new enumerator values and the flexible implementation of the ‘move_camera()’ function, which can offload the implementation of different movement types to their own respective functions, while remaining simple in its own implementation.
+
 <img src="docs/assets/images/MovementChange.png" alt="A basic implementation of camera movement type selection that allows for future expansions.">
 
 While building the system, the previously global scope values for camera properties were becoming more numerous and difficult to handle. It is still advantageous for any section of the project code to have immediate access to the camera properties without being passed the camera struct through function calls (which may require multiple nested calls, and passing the argument multiple times), for example in a scenario where we may wish to reduce the calculation of physics to only those objects which are relatively near to the camera position. The solution to this problem was to make the camera struct object global in scope and ensure that each of these important properties were contained within it. In this way, we only need to be aware of one global scope name, but still have access to the desired variables.
@@ -96,7 +103,9 @@ The addition of the debugging flag was simple, as only one integer variable was 
 	    perform\_debugging\_feature();
     }
 The testing suite was the more substantial improvement. A new directory called ‘test’ was created, where log files and test ‘driver’ programs would be stored. One sample test was created, which calls all of the ‘constructor’ and ‘destructor’ functions on the various objects inside the project that must be built before objects can be rendered on screen. At first, my intention was to create assertions within this code to ensure that the memory was being handled correctly, but this turned out to not be feasible with available tools. Luckily, the industry-standard tool ‘valgrind,’ traces memory errors to the functions where the memory was allocated, and by using regular expressions to search the log file it creates, we are able to verify that no memory errors it detects originated from our constructor functions. To automate this workflow, some new build lines were added to the existing GNU Makefile, meaning that one only has to run the commands ‘make test\_suite’ and ‘make run\_tests’ to compile and run the testing suite. From there, valgrind is run on the process to detect any memory errors and create a log file, and grep is used to search the log file for the names of the functions we called. The results of the search are printed using bash commands.
+
 <img src="docs/assets/images/TestingAutomation.png" alt="A portion of the Makefile which shows bash commands being used to run testing in an automated way.">
+
 <img src="docs/assets/images/TestSample.png" alt="A snippet of code from the testing suite, which shows how memory tests are run and results are evaluated.">
 
 This enhancement exemplifies the goals several key course outcomes:
@@ -115,18 +124,23 @@ Altogether, I believe this collection of enhancements not only demonstrates my c
 
 ### Enhancement 1: System Call Efficiency
 In the category of Algorithms and Data Structures, I implemented three enhancements that targeted the efficiency, complexity, and robustness of the project. The first enhancement was a modification to the existing code in the project, intending to improve the efficiency of the code in the main rendering loop by eliminating repetitive system calls. Originally, a memory allocation call was made each time the program attempted to calculate if one object’s hitbox had a vertex within the coordinates of another. For each pair of objects, the worst case for performance is running n^2 times, where n is the number of hitboxes, due to the nested for loops used to iterate the hitbox lists. Due to this drawback, the number of times the calculations are performed are limited by first checking how far apart two objects are by finding a vector between the two and skipping any pairs that are farther apart than their widest dimension.
+
 <img src="docs/assets/images/CollisionPrecheck.png" alt="A code snippet demonstrating the concept of checking distance before any coordinate space transformations.">
 
 Memory has to be allocated for the transformations to be performed so that the original vertex arrays are preserved. Because a hitbox may have any number of vertices, the memory must be allocated dynamically during runtime, or else some predefined limit must be created so that an appropriately sized array could be declared at compile time. Since the function can run potentially many times during each frame the program wishes to draw, reducing the number of system calls used to allocate memory within the function was a high priority. The solution I engineered closely resembles a ‘singleton’ pattern. Instead of allocating and freeing memory each time the function is called, the new algorithm will check what size of memory has already been allocated. If the size is sufficient to hold the vertices of both objects, no allocation is made. If the objects have more vertices than can currently be stored, the memory size is reallocated to store twice the largest number of vertices between the two objects. 
+
 <img src="docs/assets/images/CollisionMemorySingleton.png" alt="Global variables and a function definition that implement a singleton pattern for memory allocation.">
+
 <img src="docs/assets/images/CollisionMemoryCall.png" alt="An example of the new memory allocation where malloc was previously used.">
 
 This way, system calls are only made when necessary to store a larger amount of memory, and in most cases, where the same objects are being compared frame after frame, new allocations will have to be made far less frequently than before. The drawback of this method is that any program that calls a collision library function now must call the free\_collision\_memory() function during cleanup.
 
 In the sample program, only two objects are ever checked for collision, so the number of vertices never increases, and only one system call is ever made, whereas before, there were 2 system calls (malloc and free) for each hitbox, for each frame. With n(the number of hitboxes) being so small, this change does not significantly impact the time to draw each frame, however, with larger values for n, the impact would expectedly be much greater.
+
 <img src="docs/assets/images/CollisionCheckCall.png" alt="The portion of the main function that calls the collision check function.">
 
 Below is pictured a before and after for real time between each frame, showing that, at low values for n, the real time difference was not measureable, despite the measurable reduction of system calls. 
+
 <img src="docs/assets/images/SystemCallBefore.png" alt="The time between each frame before the system call efficiency improvements, averaging ~4ms"> <img src="docs/assets/images/SystemCallAfter.png" alt="The time between each frame after the system call efficiency improvements, averaging ~4ms.">
 	
 The course outcomes I wished to demonstrate with this change were as follows:
@@ -143,13 +157,16 @@ I was fairly surprised by how simple and effective it was to implement this chan
 
 ### Enhancement 2: Transformation Algorithms
 The second enhancement chosen for Algorithms and Data Structures was the implementation of acceleration in object movement and the creation of an algorithm which would accelerate a ‘tethered’ camera in the direction of a focused object when it is further than some distance away, but allow it to move freely (decelerate ‘naturally’) when it is within that distance. Previously, the vector library created for the project already contained some of the necessary algorithms to implement these features, but they were unused as of beginning this enhancement. 
+
 <img src="docs/assets/images/VectorCalculations.png" alt="A sample of the vectors header file that shows functions that calculate angles between coordinates.">
 
 The implementation of object acceleration was done rather simply, by replacing the fixed velocities that were previously given with a new equation that multiplied the rate of acceleration by the change in time since the last frame, added it to current velocity, and gave it a ceiling of the declared maximum velocity.
+
 <img src="docs/assets/images/PlayerAcceleration.png" alt="Modifications to the player movement functions that show the addition of acceleration calculations.">
 
 	
 The more difficult work was implementing the ‘calculate\_tether()’ function, which was previously given a basic temporary implementation as part of the Software Engineering enhancements. This function checks if the camera is at a greater distance from the object than the desired ‘tether’ length, finds the angle between the camera and the object, finds the component magnitudes of the distance in the x and y dimensions, and changes the camera coordinates appropriately to be at exactly the distance of the tether at the same angle. It then changes the velocity of the camera to match that of the focus object so that the camera will begin to move in that same direction. If the camera is not further than the tether distance, it will begin to slow down by having a rate of acceleration 1/x, where x is some chosen value greater than 1.
+
 <img src="docs/assets/images/TetherImplementation.png" alt="Code from the camera header that implements the tether camera movement type.">
 
 
@@ -163,11 +180,14 @@ By using a mathematical and algorithmic solution to solve the problem of adding 
 The final enhacement of the Algorithms and Data Structures category was the implementation of a data structure that could flexibly hold serialized data of different types. This idea was integrated into the project by creating functions that would serialize and deserialize a game\_object struct (used in the project’s objects library), and will further be used in support of the Databases category of enhancements. The need for a data structure that could hold various structs, objects, and other data in a way that accomodates multiple data types and a variable number of elements became apparent while planning the database system that is to be implemented in the Databases enhancement. This ‘intermediary’ container allows for a common object that can be passed to and returned from the database functions, leaving the process of handling the data inside up to the program using the database API.
 
 From these requirements, we know that four things are required: a heap of memory to store the data, a count of the elements being stored, an array of enumerators indicating the data types of each element, and the size of the memory heap. The size of the memory heap can be inferred by iterating the data type array and summing the sizes needed to store each element. The size of the data type array is known because it holds only one data type and stores the same number of elements as the memory heap.
+
 <img src="docs/assets/images/RowDataStructure.png" alt="The data structure used to contain data for a row in the database.">
 
 Memory allocation functions in C do not return pointers of specific data types; they are flexible in that they return a void \*, which may be cast to any data type. Due to this convention, we also store the pointer to the memory area as a void \*. It is, however, difficult to work with a void \*, as pointer arithmetic is not allowed, therefore the pointer is cast as a char \* whenever pointer manipulation is necessary, because char is guaranteed to be the minimum sized data type (typically an 8-bit byte on modern systems). In the chosen target environment (x86\_64 linux), the char \* will always address 1 byte, so processing the data byte by byte is much easier.
 The images below shows the capability of using pointer arithmetic on the memory buffer when it is cast as a char \*.
+
 <img src="docs/assets/images/BufferWrite.png" alt="A function used to manipulate void * memory by casting it as char *.">
+
 <img src="docs/assets/images/BufferWriteCall.png" alt="A sample of code that uses the write to buffer function.">
 
 The images above also show a portion of the code used to serialize the game objects into the data structure. It is done by calling a wrapper function to memcpy, which copies the bytes of the passed data type into the data structure’s memory heap at the appropriate offset. The data can be deserialized by using the same offsets (which can be determined by the size of the data types listed by the data type array) and using memcpy with the object attributes as the destination and the data buffer as the source, rather than the other way around.
@@ -197,28 +217,34 @@ The requirements I set for the database were as follows: enable for the creation
 ### Implementation Details
 The library created can be separated (and is nominally separated by comments) into a few categories: file io that takes place at lower levels of abstraction, and database, table, column, and row operations that take place at higher levels of abstraction. The functions intended to be called by an accompanying program like gl\_engine are simple and user friendly. For example, find\_table\_by\_id(table id, db) requires the caller to pass a table id integer and a database pointer in as arguments and returns the offset of the table in the database file. Likewise, add\_row\_to\_table(row data, table id, db) takes the same arguments, plus the row data in the previously mentioned row\_object data structure format, and writes it to the specified table in the database. 
 Below are images that show examples of calling the database functions using the higher level API.
+
 <img src="docs/assets/images/DatabaseOpenCall.png" alt="A code snippet showing the way a database is opened in the API using the open database function.">
+
 <img src="docs/assets/images/DatabaseUpdateCall.png" alt="A code snippet showing the create and update calls for row data in the API.">
 
 The functions then call the lower level file io operations like serial\_to\_string() and f\_replace\_between() to actually write the data to disk with the intended formatting and delimiting. All of the file operations have been reduced to three functions, f\_copy\_between(), which copies data between certain offsets from one file to another (in our case, typically a temp file used to store an unmodified copy of the database or a copy that excludes certain data), f\_replace\_between(), which utilizes f\_copy\_between() to overwrite the data between each offset with the data passed in as an argument, and f\_insert\_after(), which is similar to f\_replace\_between(), but does not overwrite any data. Numerical data was written to and from strings by using snprintf() and sscanf() so that buffer sizes could be specified and their bounds could be checked to ensure that no read or write operations occur outside of properly allocated memory.
 
 Below is an image that shows the use of snprintf to ensure we do not write out of bounds of a buffer.
+
 <img src="docs/assets/images/DatabaseSizedBuffers.png" alt="An example of the use of sized buffers in the database code to limit writes to unallocated memory.">
 
 
 ### Database Structure
 The structure of the database may look like the image below:
+
 <img src="docs/assets/images/DatabaseStructure.png" alt="The contents of a sample database file, showing comma-separated values contained in braces.">
 
 The database metadata is stored outside of any container at the beginning of the file, and specifies the number of tables and the last assigned id. Each table has a start and end symbol, which are ‘{‘ and ‘}’. Within the tables are metadata that describes the table’s id, number of rows, last assigned row id, number of columns, and name; the list of column names (currently unimplemented); the list of column data types; and then rows separated by delimiters and contained within a row start symbol ‘{‘ and row end symbol ‘}’. Within the rows are pieces of data separated by a delimiter ‘,’. Floats are stored with a fixed precision and strings are stored with a specified maximum length. 
 
 The data types are stored as a list of enumerators (image below) that are used when converting a row from a string of plain text to the elements’ respective data types.
+
 <img src="docs/assets/images/DatabaseTypes.png" alt="The definition of the types enumerator, which defines an int, float, and string type, with multiple reserved types.">
 
 ### Integration Into gl\_engine
 Once the database library had been created and was capable of storing, retrieving, and deleting data, it was ready for utilization within gl\_engine. Near the beginning of the main function, the database is opened or created if it does not exist. Afterwards, when creating the player object, gl\_engine searches the database for a GameObjects table that contains a row with id value 1, which contains the object data for the player object. If this does not exist, the object is initialized with some other values. After the main rendering loop is exited and before cleanup begins, the player object data is either written to a new row, if no row had previously existed, or the data in row 1 of the objects table is updating with the new position and rotation of the player object. The outcome is that the player object data is ‘saved’ to the database each time the program is closed and ‘loaded’ each time the project is open. The concept could be optionally expanded to any other object that is initialized, and an entire collection of objects could be stored and loaded in this way. 
 
 Pictured below is the initialization of the player object from the database retrieval.
+
 <img src="docs/assets/images/DatabaseRetrievalCall.png" alt="A code snippet showing the use of read calls from the database API.">
 
 ### Course Outcomes
@@ -233,7 +259,9 @@ For convenience, I will list the course outcomes here, numbered 1-5:
 5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
 
 Outcome 2: Within the header file for the databases library are comments that clearly state the requirements and structure of the database, give some visual aid for the database layout, and specify how certain functions should be called and what return values to expect.
+
 <img src="docs/assets/images/DatabaseConstants.png" alt="A sample of many comments from the database header that communicate ideas about the structure and design philosophy of the database.">
+
 I find all of these written communications to be invaluable to a team environment, and of the correct technical specificity for anyone who may be reading the source code files.
 
 Outcome 3: In order to meet the requirements I set out for the system, a plethora of decisions had to be made to weigh the benefits and drawbacks of certain implementation details. For example, the decision between storing binary data and plain text data was a very challenging one that had benefits for either implementation. Building this feature-complete system from the ground up demonstrates my ability to design complex solutions, follow through with design decisions, and put into place a program that solves the given problem.
