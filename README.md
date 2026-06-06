@@ -99,9 +99,11 @@ My design choices used in the additional feature clearly demonstrate my ability 
 Prior to beginning this enhancement, the project had very little in the way of formal testing. Some debugging print statements were present, as well as some visual debugging utilizing the OpenGL shaders, but there was no formal difference between debugging and production builds. For my final enhancement in the Software Design category, I decided to create a testing suite for the project that also evaluated the memory safety of the project and additionally creating a debugging flag that could be used to toggle debugging information on or off in the running process. This would align my project with a larger scale, more ‘enterprise’ project that is ready for release after undergoing quality assurance. It was also important to me that I make the testing automated in some way so that it could be utilized in a ‘group work’ setting, where tests must be reproducible and easy to run.
 
 The addition of the debugging flag was simple, as only one integer variable was added to global scope called ‘g\_debugging,’ and an additional shader uniform was created with the name ‘debugging\_enabled.’ Around every debugging statement later in the program, a conditional statement was added like so:
-    if (g\_debugging){
-	    perform\_debugging\_feature();
-    }
+```
+if (g\_debugging){
+    perform\_debugging\_feature();
+}
+```
 The testing suite was the more substantial improvement. A new directory called ‘test’ was created, where log files and test ‘driver’ programs would be stored. One sample test was created, which calls all of the ‘constructor’ and ‘destructor’ functions on the various objects inside the project that must be built before objects can be rendered on screen. At first, my intention was to create assertions within this code to ensure that the memory was being handled correctly, but this turned out to not be feasible with available tools. Luckily, the industry-standard tool ‘valgrind,’ traces memory errors to the functions where the memory was allocated, and by using regular expressions to search the log file it creates, we are able to verify that no memory errors it detects originated from our constructor functions. To automate this workflow, some new build lines were added to the existing GNU Makefile, meaning that one only has to run the commands ‘make test\_suite’ and ‘make run\_tests’ to compile and run the testing suite. From there, valgrind is run on the process to detect any memory errors and create a log file, and grep is used to search the log file for the names of the functions we called. The results of the search are printed using bash commands.
 
 <img src="docs/assets/images/TestingAutomation.png" alt="A portion of the Makefile which shows bash commands being used to run testing in an automated way.">
@@ -109,12 +111,13 @@ The testing suite was the more substantial improvement. A new directory called �
 <img src="docs/assets/images/TestSample.png" alt="A snippet of code from the testing suite, which shows how memory tests are run and results are evaluated.">
 
 This enhancement exemplifies the goals several key course outcomes:
-
-“1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
+```
+1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
 
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)
 
-5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
+5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources
+```
 
 The creation of automation that is reproducible and easily utilized by a full time promotes the creation of a collaborative environment. The use of industry-standard tools like valgrind, GNU make, and testing driver programs to achieve industry-specific goals like quality assurance testing showcase outcome 4. The act of testing to reduce errors, prevent the inclusion of errors, and ensure the memory-safety of the program, which is the most exploited attack surface of any C program, demonstrates the use of a security mindset and architecting security as a first class priority into the project.
 
@@ -144,13 +147,13 @@ Below is pictured a before and after for real time between each frame, showing t
 <img src="docs/assets/images/SystemCallBefore.png" alt="The time between each frame before the system call efficiency improvements, averaging ~4ms"> <img src="docs/assets/images/SystemCallAfter.png" alt="The time between each frame after the system call efficiency improvements, averaging ~4ms.">
 	
 The course outcomes I wished to demonstrate with this change were as follows:
-
-“3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
+```
+3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
 
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database) 
 
-5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
-
+5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources
+```
 By using a singleton-like pattern to implement a solution that improved the system call efficiency of the program, I demonstrated the ability to use well-founded techniques to deliver on industry-specific goals (4). Evaluating the existing inefficiency in the program and designing an algorithm that would eliminate that deficiency with minimal drawbacks shows my ability to appropriately apply algorithms to a given problem (3). Finally, minimizing the number of calls to malloc, the number of pointers being used, and centralizing how that memory is allocated, accessed, and freed contributes to safer code that is less likely to perform memory errors, reduces the difficulty of tracing memory calls and evaluating memory safety, and makes it easier for future code in the project to make safe memory calls (5).
 
 I was fairly surprised by how simple and effective it was to implement this change, but also dismayed by how little it changed the measureable time between frame draws. I am, however, satisfied by the great reduction in overall system calls.
@@ -171,8 +174,9 @@ The more difficult work was implementing the ‘calculate\_tether()’ function,
 
 
 Since this enhancement was purely focused on algorithmic complexity and the addition of a new feature to the project, it targets only one course outcome:
-
-“3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms)”
+```
+3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms)
+```
 
 By using a mathematical and algorithmic solution to solve the problem of adding a new feature based on changing project requirements, I believe the enhancement strongly demonstrates this skill.
 
@@ -193,10 +197,11 @@ The images below shows the capability of using pointer arithmetic on the memory 
 The images above also show a portion of the code used to serialize the game objects into the data structure. It is done by calling a wrapper function to memcpy, which copies the bytes of the passed data type into the data structure’s memory heap at the appropriate offset. The data can be deserialized by using the same offsets (which can be determined by the size of the data types listed by the data type array) and using memcpy with the object attributes as the destination and the data buffer as the source, rather than the other way around.
 	
 The course outcomes exemplified in this enhancement are:
+```
+3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
 
-“3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
-
-4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)”
+4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database)
+```
 
 By solving the problem of needing to accept a variable number of elements of multiple data types in a single argument by storing them in a data structure, then writing the appropriate algorithms to place data in and read data from this structure, I have shown the capacity to design and evaluate algorithmic solutions to a given problem (3). By appropriately utilizing the tools available in various C libraries that offer functions for memory manipulation and combining them with innovative techniques to deliver value to the project, I have demonstrated course outcome 4.
 	
@@ -250,14 +255,15 @@ Pictured below is the initialization of the player object from the database retr
 
 ### Course Outcomes
 For convenience, I will list the course outcomes here, numbered 1-5:
-
-“1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
+```
+1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision making in the field of computer science
 
 2. Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts 3. Design and evaluate computing solutions that solve a given problem using algorithmic principles and computer science practices and standards appropriate to its solution, while managing the trade-offs involved in design choices (data structures and algorithms) 
 
 4. Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals (software engineering/design/database) 
 
-5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources”
+5. Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources
+```
 
 Outcome 2: Within the header file for the databases library are comments that clearly state the requirements and structure of the database, give some visual aid for the database layout, and specify how certain functions should be called and what return values to expect.
 
