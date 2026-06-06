@@ -20,6 +20,10 @@ This portfolio will include all coursework in CS-499, which aims to demonstrate 
 
 [Algorithms Enhancement 1: System Call Efficiency](#enhancement-1-system-call-efficiency)
 
+[Algorithms Enhancement 2: Transformation Algorithms](#enhancement-2-transformation-algorithms)
+
+[Algorithms Enhancement 3: Data Structure](#enhancement-3-data-structure)
+
 [Databases](#databases)
 
 [Databases Enhancment 1: Database From Scratch](#enhancement-1-database-from-scratch)
