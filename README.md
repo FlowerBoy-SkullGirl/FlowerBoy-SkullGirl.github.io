@@ -4,6 +4,8 @@ This portfolio will include all coursework in CS-499, which aims to demonstrate 
 [Here is my personal repository for the project](https://github.com/FlowerBoy-SkullGirl/gl_engine)
 
 ### Table of Contents
+[Professional Self-Assessment](#professional-self-assessment)
+
 [Video Code Review](#video-code-review)
 
 [gl\_engine](#gl_engine)
@@ -39,6 +41,20 @@ This portfolio will include all coursework in CS-499, which aims to demonstrate 
 [Databases: Course Outcomes](#course-outcomes)
 
 [Databases: Reflection](#reflection)
+
+
+### Professional Self-Assessment
+For all of my life, but particularly since 2019, I have been interested in computers. In 2019, I began self-led study of a number of computer science topics, including programming, server software, and computer hardware engineering. In 2021, through the desire to experience more challenging topics in a more structured learning environment, I enrolled in school and began my journey to become a professional in computer science. This was supported by my entry into the IT field and pursuit of IT certifications like the CompTIA A+.
+
+Since my start in programming, I have developed a preference for ‘defensive’ practices to build resilient code, like guard statements to ensure that all values are initialized properly and a zero-trust policy for data being passed from a calling function. Resilience and security are some of my highest priorities when developing software, and debugging has become one of my greatest strengths. Since I write primarily in C, gdb has become an invaluable tool to me. By the time I had reached my ‘Secure Coding’ course, I was already very comfortable completing the assignments that called for parameterization of queries, bounds checking of arrays, and overflow prevention tactics. In my Computer Graphics course, I was able to work with the professor to point out and resolve several bugs that I found within the provided codebase that all students had access to, including values that were never initialized to default values, which would cause errors under certain conditions.
+
+I have also, since my early days of self-study, had a strong grasp on the underlying hardware that runs our digital world. Some of that study culminated in me building my own keyboard to alleviate wrist strain by modifying Clojure code from the dactyl manuform project to create a 3D model, print it, and flash firmware that I modified from the qmk project written in C to a microcontroller. From there, all the switches were wired by hand to the microcontroller. From that point, understanding and excelling in the projects set forth in my ‘Emerging System Architectures’ course, which had students connect different electrical devices to a breadboard and use a raspberry pi with python software to create an ‘embedded system’ to operate them, was trivial. 
+
+The courses that accelerated my learning the most were Linear Algebra, Computer Graphics, and Software Reverse Engineering. It would have been exceptionally more difficult to teach myself the concepts of matrix transformations, 3D graphic coordinate spaces, and program disassembly and interpretation without the structure that these courses provided. I was pleased to discover that all of these concepts were easy to implement once given the proper direction, especially programming in assembly languages, which had previously intimidated me. It was the further understanding of advanced mathematics that allowed me to continue work on my gl\_engine project, which I had reached a plateau in due to a lack of knowledge regarding matrices.
+
+Entering courses also allowed me the opportunity of meeting and working with other students to complete projects together, and challenged me to integrate my code into larger projects that contained other people’s code. This also gave me insight into how to develop plans for APIs that act as a ‘black box’ where the external useage is fixed, but the internal implementation may change, and coordinate these plans with other people working on the project. I have also been able to adapt to feedback from instructors to make improvements to the quality of my code or better align with the requirements set out in the project guidelines, whereas coding on personal projects, I was only able to set and meet my own requirements. The experience of having external requirements imposed has been indispensable. 
+
+The project that I will introduce and show my work on later in this portfolio, gl\_engine, is a culmination of everything I have learned in my time as a computer scientist. It is a showcase of my ability to architect systems that are modular, contain many integrated parts, and use resilient, safe practices throughout a codebase. Everything is built from the ground up (outside of OpenGL) to build something very complex, but retains simplicity in its limited and defined scope, so I am very proud of it, as a personal achievement in software architecturing and design.
 
 
 ### Video Code Review
