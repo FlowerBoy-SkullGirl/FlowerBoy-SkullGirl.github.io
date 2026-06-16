@@ -3,6 +3,8 @@ This portfolio will include all coursework in CS-499, which aims to demonstrate 
 
 [Here is my personal repository for the project](https://github.com/FlowerBoy-SkullGirl/gl_engine)
 
+A zipped copy of the project directory has also been provided in the github pages repository for each stage of the enhancement process.
+
 ### Table of Contents
 [Professional Self-Assessment](#professional-self-assessment)
 
